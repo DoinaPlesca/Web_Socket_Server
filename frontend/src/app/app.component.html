@@ -1,3 +1,24 @@
-<input [formControl] = "messageContent"><button (click)="sendMessage()" ></button>
 
-{{messages | json}}
+
+<div class="container">
+  <!-- Left Box -->
+  <div class="left-box">
+    <!-- To Do -->
+  </div>
+
+  <!-- Chat Box -->
+  <div class="chat-box">
+    {{messages | json}}
+
+    <div class="input-container">
+    <input [formControl]="messageContent" placeholder="Type your message here...">
+    <button (click)="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
