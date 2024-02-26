@@ -1,6 +1,7 @@
 using System.Reflection;
 using Fleck;
 using lib;
+using websocket;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,26 +9,30 @@ var builder = WebApplication.CreateBuilder(args);
 var clientEventHandlers = builder.FindAndInjectClientEventHandlers(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
-var server = new WebSocketServer("ws://0.0.0.0:8181");
 
+var server = new WebSocketServer("ws://0.0.0.0:8181");
+//list of connection
+//kiping state of connection
 var wsConnections = new List<IWebSocketConnection>();
 
+// sent a message to the server
 server.Start(ws =>
 {
     ws.OnOpen = () =>
     {
-        wsConnections.Add(ws);
+        StateService.AddConnection(ws);
     };
-    ws.OnMessage = message =>
+    ws.OnMessage = async message =>
     {
         try
         { //STEP 2:  INVOKE THE EVENT HANDLER
-            app.InvokeClientEventHandler(clientEventHandlers, ws, message);
+           await app.InvokeClientEventHandler(clientEventHandlers, ws, message);
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
             Console.WriteLine(e.InnerException);
+            Console.WriteLine(e.StackTrace);
             
             
         }
